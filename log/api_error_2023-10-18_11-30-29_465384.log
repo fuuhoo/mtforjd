@@ -1,0 +1,4238 @@
+2023-10-18 12:00:01.965 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:03.341 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:03.391 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:03.732 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:03.781 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:04.586 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:04.925 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:05.124 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:05.330 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:05.840 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:05.891 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:05.942 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:05.988 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:06.174 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:12.534 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:12.744 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:13.098 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:13.304 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:16.279 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:16.371 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:16.566 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:32.287 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:32.334 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:32.535 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:32.887 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
+2023-10-18 12:00:34.869 | ERROR    | api.mobileApi:doOrderSumit:142 - 发起订单错误:<!DOCTYPE html>
+<html>
+	<head>
+		<title>抢购失败</title>
+    	<meta name="author" content="m.jd.com">
+    	<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		<meta name="renderer" content="webkit" />
+		<meta name="viewport" content="width=750" />
+	    <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="format-detection" content="telephone=no">
+        <link rel="apple-touch-icon-precomposed" href="//m.jd.com/images/apple-touch-icon.png"/>
+		<link rel="stylesheet" type="text/css" href="../misc/css/q-order.css"/>
+		<script type="text/javascript" src="//misc.360buyimg.com/lib/js/e/jquery-1.2.6.pack.js"></script>
+	</head>
+
+	<style>
+		html, body {
+			background: #fff;
+		}
+		* {
+			padding: 0;
+			margin: 0;
+			border: 0;
+		}
+		.error-box {
+			text-align: center;
+			padding-top: 250px;
+		}
+		.error-box .tryBtn {
+			font-size: 34px;
+			text-align: center;
+			width: 500px;
+			height: 90px;
+			background-image: linear-gradient(-90deg, #FF2323 1%, #FF4C2C 100%);
+			border-radius: 60px;
+			color: #fff;
+			line-height: 90px;
+			margin: 90px auto 0;
+		}
+
+		.error-box .dog {
+			width: 325px;
+			height: 284px;
+			display: block;
+			margin: 0 auto;
+		}
+		.error-box .text {
+			width: 366px;
+			height: 90px;
+			margin-top: 36px;
+		}
+
+	</style>
+
+<!--<body id="body" class="black-bg">-->
+<!--	<div class="wrapper">-->
+<!--		<div class="m20 mar-slplit-30">-->
+<!--			<div class="show-logo">-->
+<!--			</div>-->
+<!--			<div class="mar-slplit-20 fail-warn">-->
+<!--				<p class="mar-slplit-10">很遗憾，木有抢到... </p>-->
+<!--				<p id="failNote"></p>-->
+<!--				<p class="mar-slplit-30 t-center">-->
+<!--					<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" style="display:none" class="button button-center button-red"><span>再次抢购</span></a>-->
+<!--				</p>-->
+<!--			</div>-->
+<!--		</div>-->
+<!--&lt;!&ndash;		<div style="padding:0 6%;width:100%;">&ndash;&gt;-->
+<!--&lt;!&ndash;			<div style="position:fixed;left:0;bottom:0;z-index:10;padding:20px 0">&ndash;&gt;-->
+<!--&lt;!&ndash;				<a href="//h5.m.jd.com/active/3wX17ys13EaDtijVP6KnfrBucNhV/index.html"  clstag="pageclick|keycount|201606075|1" style="display:table-cell;"><img src="//marathon.jd.com/misc/img/likuanAPP.jpg" alt="" style="width:100%;"></a>&ndash;&gt;-->
+<!--&lt;!&ndash;			</div>			&ndash;&gt;-->
+<!--&lt;!&ndash;		</div>&ndash;&gt;-->
+<!--	</div>-->
+<!--</body>-->
+	<body>
+		<div class="error-box">
+			<div class="error-pic">
+				<img class="dog" src="https://m.360buyimg.com/imagetools/jfs/t1/165697/40/6027/119263/6020d640E6932a371/9b67169035bd769b.png">
+				<img class="text" src="https://m.360buyimg.com/imagetools/jfs/t1/167649/25/6078/33510/6020d640E63988e19/30c549acc73107cc.png">
+				<div class="tryBtn" id="tryBtn" style="display: none;">返回重试</div>
+<!--				<a href="javascript:void(0);" onclick="tryAgain();" id="tryBtn" class="tryBtn" class="button button-center button-red"><span>再次抢购</span></a>-->
+			</div>
+		</div>
+	</body>
+</html>
+<script type="text/javascript">
+	var koDomain = window.location.host;
+	function showBtn(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			$("#tryBtn").hide();
+		}else{
+			$("#tryBtn").hide();
+		}
+
+		$("#tryBtn").click(function() {
+			tryAgain();
+		});
+	}
+	function tryAgain(){
+		var skuId = readCookie("seckillSku");
+		if(skuId!=""){
+			window.location.href = "//"+koDomain+"/m/captcha.html?skuId="+skuId+"&rid="+Math.random();
+		}else{
+			$("#tryBtn").hide();
+		}
+	}
+
+
+
+	function readCookie(name){
+		var cookieValue = "";
+		var search = name + "=";
+		if(document.cookie.length > 0){
+			offset = document.cookie.indexOf(search);
+			if (offset != -1){
+				 offset += search.length;
+				 end = document.cookie.indexOf(";", offset);
+				 if (end == -1) 
+					 end = document.cookie.length;
+				 cookieValue = (document.cookie.substring(offset, end));
+			}
+		}
+		return cookieValue;
+	}
+	
+	function updateFailNote(){
+		var reason = getQueryString('reason');
+		if(reason!='' && reason!=null && reason != 'null' && reason.indexOf('预约')!=-1){
+			$("#failNote").text('抢购失败，此商品为预约商品，您暂无预约资格');
+		}else{
+			$("#failNote").text('运气不好别灰心，换个指头再来一次！');
+		}
+	}
+	
+	
+	function getQueryString(name){
+  		var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+  		var r = window.location.search.substr(1).match(reg);
+   		if(r!=null)
+   			return  decodeURI(r[2]); 
+   		return null;
+	}
+
+
+	//showBtn();
+	// updateFailNote();
+	
+    var jap = {
+       siteId:'JA2016_111432',  
+	};
+    
+    (function() {
+        var ja = document.createElement('script'); ja.type = 'text/javascript'; ja.async = true;
+        ja.src = ('https:' == document.location.protocol ? 'https://wlssl' : 'http://wl') + '.jd.com/unify.min.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ja, s);
+    })();
+</script>
+
+
