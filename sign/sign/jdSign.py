@@ -54,14 +54,7 @@ def getSignWithstv(functionId, body, uuid, client, clientVersion):
 #test
 
 def main():
-    functionId = "genToken"
-    clientVersion = "12.1.6"
-    client = "android"
-    uuid = '换成你的uuid'
-    body = '{"action":"to","to":"https%3A%2F%2Fdivide.jd.com%2Fuser_routing%3FskuId%3D100012043978%26from%3Dapp"}'
-    #070353ead481921bf1e5668fb0821134
-    #st=1696996798818
-    #sv=100
-    getSignTest(functionId, body, uuid, client, clientVersion)
+    pass
+
 if __name__ == "__main__":
     main()
